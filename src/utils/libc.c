@@ -1,11 +1,6 @@
 #include <gloom/libc.h>
 
-extern void __heap_base;
-
-#define BUFSZ 128
-
-static void* g_heap_top = &__heap_base;
-static u32 g_heap_size = 0;
+#define BUF_SZ 128
 
 /* We use a buffer for printf, so that we're not constantly calling write
  * everytime we need to write a character.
@@ -190,7 +185,7 @@ void vsnprintf(char* buf, u32 len, const char* fmt, va_list ap) {
 }
 
 void vfdprintf(int fd, const char* fmt, va_list ap) {
-  char buf[BUFSZ];
+  char buf[BUF_SZ];
   struct printf_buf pb;
   pb.end = 0;
   pb.fd = fd;
@@ -198,20 +193,6 @@ void vfdprintf(int fd, const char* fmt, va_list ap) {
   pb.buf = buf;
   process_fmt(&pb, fmt, ap);
   buf_flush(&pb);
-}
-
-void* malloc(u32 size) {
-  void* ptr = g_heap_top;
-  if (g_heap_size < size)
-    g_heap_size += platform_request_mem(size);
-  g_heap_top += size;
-  g_heap_size -= size;
-  return ptr;
-}
-
-void free_all(void) {
-  g_heap_size += g_heap_top - &__heap_base;
-  g_heap_top = &__heap_base;
 }
 
 void memset(void* p, u8 b, u32 l) {

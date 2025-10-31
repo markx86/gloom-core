@@ -624,9 +624,6 @@ void render_minimap(void) {
   u32 x, y;
   u8 cell_id;
 
-  if (g_map.tiles == NULL)
-    return;
-
   minimap_x = FB_WIDTH - (g_map.w * MINIMAP_TILE_W) - 4;
   minimap_y = 4;
 

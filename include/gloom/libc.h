@@ -62,7 +62,4 @@ void snprintf(char* buf, u32 len, const char* fmt, ...) {
   va_end(ap);
 }
 
-void* malloc(u32 size);
-void free_all(void);
-
 #endif

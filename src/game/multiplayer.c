@@ -236,7 +236,6 @@ void multiplayer_signal_ready(b8 yes) {
 
 void multiplayer_leave(void) {
   struct game_pkt_leave pkt;
-  free_all(); /* Free map data */
   init_game_pkt(&pkt, GPKT_LEAVE);
   multiplayer_set_state(MULTIPLAYER_CONNECTED);
   send_packet_checked(&pkt, sizeof(pkt));
@@ -386,6 +385,13 @@ void serv_hello_handler(void* buf, u32 len) {
     return; /* Malformed packet, drop it */
   }
 
+  /* Check map size is valid */
+  if (pkt->map_w >= MAX_MAP_WIDTH || pkt->map_h >= MAX_MAP_HEIGHT) {
+      eprintf("invalid map size %ux%u (max. is %ux%u)",
+              pkt->map_w, pkt->map_h, MAX_MAP_WIDTH, MAX_MAP_HEIGHT);
+      return; /* Malformed packet, drop it */
+  }
+
   /* Get the size of variable data (map data + sprite data),
    * remove the size of the packet header from the packet length.
    */
@@ -395,7 +401,6 @@ void serv_hello_handler(void* buf, u32 len) {
   g_sprites.n = 0;
   g_map.w = pkt->map_w;
   g_map.h = pkt->map_h;
-  g_map.tiles = malloc(map_size);
 
   /* Set player ID */
   g_player_id = pkt->player_id;

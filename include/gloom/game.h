@@ -15,6 +15,9 @@
 #define MAX_MOUSE_SENS 2.0f
 #define MIN_MOUSE_SENS 0.1f
 
+#define MAX_MAP_HEIGHT 64
+#define MAX_MAP_WIDTH  64
+
 #define MAX_SPRITES   255
 
 struct camera {
@@ -72,7 +75,7 @@ struct sprites {
 
 struct map {
   u32 w, h;
-  u8* tiles;
+  u8 tiles[MAX_MAP_WIDTH * MAX_MAP_HEIGHT];
 };
 
 union keys {
