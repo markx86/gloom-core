@@ -415,11 +415,9 @@ void serv_hello_handler(void* buf, u32 len) {
         break;
       if (s->desc.id != g_player_id)
         init_sprite(s);
-      else {
+      else
         /* Init data refers to the player */
-        g_player.pos = s->transform.pos;
-        g_player.rot = s->transform.rot;
-      }
+        game_init_player(s->transform.pos, s->transform.rot);
       len -= sizeof(*s);
       ++s;
     }

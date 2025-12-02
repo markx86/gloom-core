@@ -106,7 +106,7 @@ void game_player_add_rot(f32 delta);
 vec2f game_get_player_dir(void);
 b8    game_move_and_collide(vec2f* pos, vec2f* diff, f32 radius);
 
-void game_init(void);
+void game_init_player(vec2f pos, f32 rot);
 void game_tick(f32 delta);
 void game_update(f32 delta);
 void game_render(void);

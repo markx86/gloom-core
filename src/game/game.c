@@ -659,13 +659,10 @@ void game_render(void) {
   render_minimap();
 }
 
-void game_init(void) {
+void game_init_player(vec2f pos, f32 rot) {
   g_display_health = g_player.health = PLAYER_MAX_HEALTH;
-  g_camera.pos = g_player.pos;
-  /* If this seems counter intuitive, you should look into
-   * the hello packet handler in multiplayer.c.
-   */
-  game_player_set_rot(g_player.rot);
+  g_camera.pos = g_player.pos = pos;
+  game_player_set_rot(rot);
 }
 
 void game_tick(f32 delta) {

@@ -108,7 +108,6 @@ void on_enter(void) {
   color_set_alpha(0x7F);
   ui_set_colors(FOREGROUND_COLOR, BACKGROUND_COLOR);
   ui_on_enter(g_buttons, ARRLEN(g_buttons));
-  game_init();
 }
 
 static
