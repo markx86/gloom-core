@@ -202,7 +202,7 @@ void ui_on_mouse_down(u32 x, u32 y, struct component* comps, u32 n) {
 
   for (i = 0; i < n; ++i) {
     c = &comps[i];
-    if (c->state == UICOMP_HOVER && component_is_mouse_over(x, y, c))
+    if (component_is_mouse_over(x, y, c))
       c->state = UICOMP_PRESSED;
   }
 }
