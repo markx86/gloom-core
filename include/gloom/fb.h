@@ -4,32 +4,42 @@
 #include <gloom/types.h>
 #include <gloom/macros.h>
 
-#define FB_WIDTH  640
-#define FB_HEIGHT 480
+#define FB_WIDTH  _g_fb.width
+#define FB_HEIGHT _g_fb.height
 
-extern u32 _fb[FB_WIDTH * FB_HEIGHT];
+struct fb {
+  u32* pxls;
+  f32* zbuf;
+  u32 width;
+  u32 height;
+  u32 stride;
+};
 
-#define FB_SIZE   sizeof(_fb)
-#define FB_LEN    ARRLEN(_fb)
+extern struct fb _g_fb;
 
 static inline
-void fb_set_pixel(u32 x, u32 y, u32 c) {
-  _fb[x + y * FB_WIDTH] = c;
+u32 _fb_offset(u32 x, u32 y) {
+  return x + y * _g_fb.stride;
 }
 
 static inline
-void fb_set_pixel_index(u32 i, u32 c) {
-  _fb[i] = c;
+void fb_set_pixel(u32 x, u32 y, u32 c) {
+  _g_fb.pxls[_fb_offset(x, y)] = c;
 }
 
 static inline
 u32 fb_get_pixel(u32 x, u32 y) {
-  return _fb[x + y * FB_WIDTH];
+  return _g_fb.pxls[_fb_offset(x, y)];
 }
 
 static inline
-u32 fb_get_pixel_index(u32 i) {
-  return _fb[i];
+void fb_set_depth(u32 x, f32 depth) {
+  _g_fb.zbuf[x] = depth;
+}
+
+static inline
+f32 fb_get_depth(u32 x) {
+  return _g_fb.zbuf[x];
 }
 
 #endif

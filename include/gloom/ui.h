@@ -70,9 +70,11 @@ void ui_draw_string_with_color(u32 x, u32 y, const char* text, u32 color);
 
 static inline
 void ui_clear_screen_with_color(u32 color) {
-  u32 i;
-  for (i = 0; i < FB_LEN; ++i)
-    fb_set_pixel_index(i, color);
+  u32 x, y;
+  for (y = 0; y < FB_HEIGHT; ++y) {
+    for (x = 0; x < FB_WIDTH; ++x)
+      fb_set_pixel(x, y, color);
+  }
 }
 
 static inline

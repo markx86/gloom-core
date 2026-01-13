@@ -1,19 +1,15 @@
 #include <gloom/fb.h>
+#include <gloom/gloom.h>
 
-u32 _fb[FB_WIDTH * FB_HEIGHT];
+struct fb _g_fb;
 
-void* gloom_framebuffer(void) {
-  return _fb;
-}
-
-u32 gloom_framebuffer_width(void) {
-  return FB_WIDTH;
-}
-
-u32 gloom_framebuffer_height(void) {
-  return FB_HEIGHT;
-}
-
-u32 gloom_framebuffer_size(void) {
-  return FB_SIZE;
+void gloom_set_framebuffer(void* fb, void* zb,
+                           u32 width, u32 height, u32 stride) {
+  _g_fb = (struct fb) {
+    .pxls = fb,
+    .zbuf = zb,
+    .width = width,
+    .height = height,
+    .stride = stride
+  };
 }

@@ -22,9 +22,7 @@ void gloom_exit(void);
 void* gloom_packet_buffer(void);
 u32   gloom_packet_buffer_size(void);
 
-void* gloom_framebuffer(void);
-u32   gloom_framebuffer_width(void);
-u32   gloom_framebuffer_height(void);
-u32   gloom_framebuffer_size(void);
+void gloom_set_framebuffer(void* fb, void* zb,
+                           u32 width, u32 height, u32 stride);
 
 #endif

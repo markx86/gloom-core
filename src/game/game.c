@@ -29,7 +29,6 @@
 
 #define CAMERA_POS_INTERP 0.66f
 
-static f32 g_zbuf[FB_WIDTH];
 static i32 g_display_health;
 
 const vec2i g_sprite_dims[] = {
@@ -318,7 +317,7 @@ void draw_column(u8 cell_id, i32 x, const struct hit* hit) {
     for (; y < line_y; ++y)
       fb_set_pixel(x, y, line_color);
   }
-  for (; y < FB_HEIGHT; ++y)
+  for (; y < (i32)FB_HEIGHT; ++y)
     fb_set_pixel(x, y, COLOR(BLACK));
 }
 
@@ -406,16 +405,16 @@ void draw_sprite(struct sprite* s) {
 
   a = color_get_alpha_mask();
   /* Draw the sprite */
-  for (x = MAX(0, x_start); x < x_end && x < FB_WIDTH; x++) {
+  for (x = MAX(0, x_start); x < x_end && x < (i32)FB_WIDTH; x++) {
     /* Discard stripe if there's a wall closer to the camera */
-    if (g_zbuf[x] < s->depth2)
+    if (fb_get_depth(x) < s->depth2)
       continue;
     /* Compute x texture coordinate */
     uvx = (f32)((x - x_start) * tex_w) / uvw;
     /* Invert on the x axis if needed */
     if (invert_x)
       uvx = tex_w - uvx;
-    for (y = MAX(0, y_start); y < y_end && y < FB_HEIGHT; y++) {
+    for (y = MAX(0, y_start); y < y_end && y < (i32)FB_HEIGHT; y++) {
       uvy = (f32)((y - y_start) * tex_h) / uvh;
       color = tex[uvx + uvy * tex_w];
       if (color)
@@ -439,7 +438,7 @@ void render_scene(void) {
   } else
     g_camera.pos = g_player.pos;
 
-  for (x = 0; x < FB_WIDTH; ++x) {
+  for (x = 0; x < (i32)FB_WIDTH; ++x) {
     /* Compute ray direction */
     cam_x = (2.0f * ((f32)x / FB_WIDTH)) - 1.0f;
     ray_dir.x = g_player.dir.x + g_camera.plane.x * cam_x;
@@ -447,7 +446,7 @@ void render_scene(void) {
     /* Trace ray with DDA */
     cell_id = trace_ray(&g_camera.pos, &ray_dir, g_camera.dof, &hit);
     /* Store distance (squared) in z-buffer */
-    g_zbuf[x] = hit.dist * hit.dist;
+    fb_set_depth(x, hit.dist * hit.dist);
 
     draw_column(cell_id, x, &hit);
   }
@@ -496,7 +495,7 @@ void render_sprites(void) {
 
     /* Sprite is not on screen, ignore it */
     if (s->screen_x + s->screen_halfw < 0 ||
-        s->screen_x - s->screen_halfw >= FB_WIDTH)
+        s->screen_x - s->screen_halfw >= (i32)FB_WIDTH)
       continue;
 
     s->depth2 = proj.y * proj.y;
