@@ -4,14 +4,12 @@
 #include <gloom/types.h>
 #include <gloom/macros.h>
 
-#define FB_WIDTH  _g_fb.width
-#define FB_HEIGHT _g_fb.height
+#define FB_WIDTH  640
+#define FB_HEIGHT 480
 
 struct fb {
   u32* pxls;
   f32* zbuf;
-  u32 width;
-  u32 height;
   u32 stride;
 };
 

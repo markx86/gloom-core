@@ -3,13 +3,18 @@
 
 struct fb _g_fb;
 
-void gloom_set_framebuffer(void* fb, void* zb,
-                           u32 width, u32 height, u32 stride) {
+void gloom_framebuffer_set(void* fb, void* zb, u32 stride) {
   _g_fb = (struct fb) {
     .pxls = fb,
     .zbuf = zb,
-    .width = width,
-    .height = height,
     .stride = stride
   };
+}
+
+u32 gloom_framebuffer_width(void) {
+  return FB_WIDTH;
+}
+
+u32 gloom_framebuffer_height(void) {
+  return FB_HEIGHT;
 }
