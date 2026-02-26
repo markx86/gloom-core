@@ -37,6 +37,7 @@ struct player {
   vec2f pos;
   vec2f dir;
   i32 health;
+  u32 kills;
 };
 
 enum sprite_type {

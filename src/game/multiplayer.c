@@ -7,6 +7,8 @@
 
 #define MAX_PACKET_DROP 10U
 
+typedef void (*serv_pkt_handler_t)(void*, u32);
+
 enum game_pkt_type {
   GPKT_READY,
   GPKT_LEAVE,
@@ -109,15 +111,17 @@ struct input_log {
   vec2f vel;
 };
 
-#define IRING_SIZE 128
-
 static u8 g_player_id;
-static u32 g_game_id, g_player_token;
+static u32 g_game_id;
+static u32 g_player_token;
 static u32 g_client_seq, g_server_seq;
 static f32 g_game_start;
 static char g_pkt_buf[0x1000];
 
+enum multiplayer_state _g_multiplayer_state;
+
 struct {
+#define IRING_SIZE 128
   struct input_log *tail, *head;
   struct input_log buffer[IRING_SIZE];
 } g_iring;
@@ -181,10 +185,6 @@ void multiplayer_draw_game_id(void) {
   ui_draw_rect(x - 2, y - 2, w + 4, STRING_HEIGHT + 2, SOLID_COLOR(DARKRED));
   ui_draw_string_with_color(x, y, gids, SOLID_COLOR(LIGHTGRAY));
 }
-
-enum multiplayer_state _g_multiplayer_state;
-
-typedef void (*serv_pkt_handler_t)(void*, u32);
 
 static inline
 f32 get_ts(void) {
@@ -557,12 +557,22 @@ void serv_destroy_handler(void* buf, u32 len) {
 
   destroy_sprite(pkt->desc.id);
 
-  /* Handle bullet points and damage */
-  if (pkt->desc.type == SPRITE_BULLET && pkt->desc.field != 0) {
-    if (pkt->desc.owner == g_player_id)
-      ; /* TODO: add player reward */
-    else if (pkt->desc.field == g_player_id)
-      g_player.health -= BULLET_DAMAGE;
+  switch (pkt->desc.type) {
+    case SPRITE_BULLET:
+      /* Handle bullet points and damage */
+      if (pkt->desc.field != 0) {
+        if (pkt->desc.owner == g_player_id)
+          ; /* TODO: Maybe increment some hit counter or something? */
+        else if (pkt->desc.field == g_player_id)
+          g_player.health -= BULLET_DAMAGE;
+      }
+      break;
+
+    case SPRITE_PLAYER:
+      /* Handle player kills */
+      if (pkt->desc.field == g_player_id)
+        g_player.kills++;
+      break;
   }
 
   /* If the number of players left is 0 and we are in game,

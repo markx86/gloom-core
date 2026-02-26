@@ -583,7 +583,7 @@ void render_crosshair(void) {
 }
 
 static inline
-void render_hud(void) {
+void render_health_bar(void) {
   u32 health_bar_w, health_bar_c, x;
   b8 got_damage;
   const char health_lbl[] = "H";
@@ -592,11 +592,12 @@ void render_hud(void) {
   got_damage = g_display_health != g_player.health;
 
   x = 8 + STRING_WIDTH_IMM(health_lbl) + 4;
-  if (got_damage)
+  if (got_damage) {
     /* If the player received damage, draw a rectangle around the health
      * bar to draw the attention of the player.
      */
     ui_draw_rect(4, 4, x + HEALTH_BAR_WIDTH, 8 + STRING_HEIGHT, COLOR(MAGENTA));
+  }
 
   health_bar_c = COLOR(RED);
   ui_draw_string_with_color(8, 8, health_lbl, health_bar_c);
@@ -614,6 +615,15 @@ void render_hud(void) {
 
     g_display_health = lerp(HEALTH_BAR_LAG, g_player.health, g_display_health);
   }
+}
+
+static inline
+void render_kill_counter(void) {
+  const char kills_lbl[] = {
+    'K', ':', ' ', (g_player.kills % 10) + '0', '\0'
+  };
+
+  ui_draw_string_with_color(8, 8 + STRING_HEIGHT + 4, kills_lbl, COLOR(GREEN));
 }
 
 static inline
@@ -654,13 +664,15 @@ void game_render(void) {
   render_scene();
   render_sprites();
   render_crosshair();
-  render_hud();
+  render_health_bar();
+  render_kill_counter();
   render_minimap();
 }
 
 void game_init_player(vec2f pos, f32 rot) {
   g_display_health = g_player.health = PLAYER_MAX_HEALTH;
   g_camera.pos = g_player.pos = pos;
+  g_player.kills = 0;
   game_player_set_rot(rot);
 }
 
