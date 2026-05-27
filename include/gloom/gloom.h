@@ -9,7 +9,7 @@ void gloom_settings_defaults(void);
 void gloom_set_pointer_locked(b8 locked);
 
 void gloom_on_ws_close(void);
-void gloom_on_recv_packet(u32 len);
+void gloom_on_recv_packet(void* buf, u32 len);
 void gloom_on_key_event(u32 code, char ch, b8 pressed);
 void gloom_on_mouse_down(u32 x, u32 y, u32 button);
 void gloom_on_mouse_up(u32 x, u32 y, u32 button);
@@ -19,10 +19,7 @@ b8   gloom_tick(f32 delta);
 void gloom_init(b8 ws_connected, u32 game_id, u32 player_token);
 void gloom_exit(void);
 
-void* gloom_packet_buffer(void);
-u32   gloom_packet_buffer_size(void);
-
-void gloom_framebuffer_set(void* fb, void* zb, u32 stride);
+void gloom_framebuffer_set(void* fb, u32 stride);
 u32  gloom_framebuffer_width(void);
 u32  gloom_framebuffer_height(void);
 

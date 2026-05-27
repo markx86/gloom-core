@@ -80,8 +80,6 @@ void on_enter(void) {
   struct component* c;
 
   ui_set_colors(FOREGROUND_COLOR, BACKGROUND_COLOR);
-  ui_clear_screen();
-  ui_draw_title(32, 32, "options");
 
   /* Initialize UI components */
   ui_on_enter(g_comps, ARRLEN(g_comps));
@@ -99,7 +97,10 @@ void on_tick(f32 delta) {
 
   UNUSED(delta);
 
-  /* draw UI components */
+  ui_clear_screen();
+  ui_draw_title(32, 32, "options");
+
+  /* Draw UI components */
   for (i = 1; i < ARRLEN(g_comps); ++i) {
     y = 32 + TITLE_HEIGHT + (STRING_HEIGHT + 8) * (i-1);
     ui_draw_component(48, y, g_comps + i);

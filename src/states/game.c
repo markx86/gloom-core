@@ -7,12 +7,6 @@
 
 static b8 g_do_send_update;
 
-#define KEY_A 65
-#define KEY_D 68
-#define KEY_S 83
-#define KEY_W 87
-#define KEY_P 80
-
 static
 void on_enter(void) {
   if (!client_pointer_is_locked())

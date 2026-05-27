@@ -26,7 +26,7 @@ static struct component g_buttons[] = {
   [2] = { .type = UICOMP_BUTTON, .on_click = on_quit_clicked,  .text = "> quit"    }
 };
 
-void set_ready(b8 yes) {
+void g_set_ready(b8 yes) {
   g_ready = yes;
   g_buttons[0].text = g_ready ? "> ready: yes" : "> ready: no";
   multiplayer_signal_ready(g_ready);
@@ -39,12 +39,12 @@ void g_wait_time_set(f32 wtime) {
 
 static
 void on_ready_click(void) {
-  set_ready(!g_ready);
+  g_set_ready(!g_ready);
 }
 
 static
 void on_options_click(void) {
-  set_ready(false);
+  g_set_ready(false);
   client_switch_state(CLIENT_OPTIONS);
 }
 
@@ -104,7 +104,7 @@ void on_tick(f32 delta) {
 
 static
 void on_enter(void) {
-  set_ready(false);
+  g_set_ready(false);
   color_set_alpha(0x7F);
   ui_set_colors(FOREGROUND_COLOR, BACKGROUND_COLOR);
   ui_on_enter(g_buttons, ARRLEN(g_buttons));

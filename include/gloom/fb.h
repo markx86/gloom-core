@@ -9,11 +9,11 @@
 
 struct fb {
   u32* pxls;
-  f32* zbuf;
   u32 stride;
 };
 
 extern struct fb _g_fb;
+extern f32 _g_zbuf[FB_WIDTH];
 
 static inline
 u32 _fb_offset(u32 x, u32 y) {
@@ -31,13 +31,13 @@ u32 fb_get_pixel(u32 x, u32 y) {
 }
 
 static inline
-void fb_set_depth(u32 x, f32 depth) {
-  _g_fb.zbuf[x] = depth;
+void zb_set_depth(u32 x, f32 depth) {
+  _g_zbuf[x] = depth;
 }
 
 static inline
-f32 fb_get_depth(u32 x) {
-  return _g_fb.zbuf[x];
+f32 zb_get_depth(u32 x) {
+  return _g_zbuf[x];
 }
 
 #endif

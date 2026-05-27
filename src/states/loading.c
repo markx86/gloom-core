@@ -33,6 +33,10 @@ static
 void on_tick(f32 delta) {
   enum multiplayer_state mp_state;
 
+  ui_clear_screen();
+  ui_draw_title(32, 32, "loading");
+  multiplayer_draw_game_id();
+
   if (g_time_in_state >= SERVER_TIMEOUT)
     /* The connection state has not changed in the last SERVER_TIMEOUT seconds,
      * assume something went wrong.
@@ -89,11 +93,7 @@ void on_enter(void) {
   g_message_y = 32 + TITLE_HEIGHT;
 
   ui_set_colors(FOREGROUND_COLOR, BACKGROUND_COLOR);
-  ui_clear_screen();
-  ui_draw_title(32, 32, "loading");
   ui_on_enter(&g_back_button, 1);
-
-  multiplayer_draw_game_id();
 }
 
 static

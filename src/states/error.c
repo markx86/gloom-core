@@ -12,17 +12,19 @@ static struct component g_quit = {
 static
 void on_enter(void) {
   ui_set_colors(FOREGROUND_COLOR, BACKGROUND_COLOR);
-  ui_clear_screen();
-
-  ui_draw_title(32, 32, "disconnected");
-  ui_draw_string(48, 32 + TITLE_HEIGHT,
-                 "a fatal error occurred, you've been disconnected");
   ui_on_enter(&g_quit, 1);
 }
 
 static
 void on_tick(f32 delta) {
   UNUSED(delta);
+
+  ui_clear_screen();
+
+  ui_draw_title(32, 32, "disconnected");
+  ui_draw_string(48, 32 + TITLE_HEIGHT,
+                 "a fatal error occurred, you've been disconnected");
+
   ui_draw_component(48, FB_HEIGHT - 32 - STRING_HEIGHT, &g_quit);
 }
 

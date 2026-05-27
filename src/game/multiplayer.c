@@ -116,7 +116,6 @@ static u32 g_game_id;
 static u32 g_player_token;
 static u32 g_client_seq, g_server_seq;
 static f32 g_game_start;
-static char g_pkt_buf[0x1000];
 
 enum multiplayer_state _g_multiplayer_state;
 
@@ -164,14 +163,6 @@ struct input_log* iring_get_after(struct input_log* ilog) {
   if (++ilog >= g_iring.buffer + IRING_SIZE)
     ilog = g_iring.buffer;
   return ilog == g_iring.head ? NULL : ilog;
-}
-
-void* gloom_packet_buffer(void) {
-  return g_pkt_buf;
-}
-
-u32 gloom_packet_buffer_size(void) {
-  return sizeof(g_pkt_buf);
 }
 
 /* Draw game id in the bottom-right corner */
@@ -573,6 +564,9 @@ void serv_destroy_handler(void* buf, u32 len) {
       if (pkt->desc.field == g_player_id)
         g_player.kills++;
       break;
+
+    default:
+      break;
   }
 
   /* If the number of players left is 0 and we are in game,
@@ -652,17 +646,10 @@ static const serv_pkt_handler_t serv_pkt_handlers[SPKT_MAX] = {
   [SPKT_TERMINATE] = serv_terminate_handler
 };
 
-void gloom_on_recv_packet(u32 len) {
+void gloom_on_recv_packet(void* buf, u32 len) {
   struct serv_pkt_hdr* hdr;
 
-  /* Check that the packet fits inside the packet buffer */
-  if (len > sizeof(g_pkt_buf)) {
-    eprintf("packet too big! (max. packet size is %u bytes, but got %u)\n",
-            sizeof(g_pkt_buf), len);
-    return;
-  }
-
-  hdr = (struct serv_pkt_hdr*)g_pkt_buf;
+  hdr = (struct serv_pkt_hdr*)buf;
   if (!hdr)
     return; /* No message received or recv error */
   if (len < sizeof(*hdr)) {

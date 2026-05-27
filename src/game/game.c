@@ -407,7 +407,7 @@ void draw_sprite(struct sprite* s) {
   /* Draw the sprite */
   for (x = MAX(0, x_start); x < x_end && x < (i32)FB_WIDTH; x++) {
     /* Discard stripe if there's a wall closer to the camera */
-    if (fb_get_depth(x) < s->depth2)
+    if (zb_get_depth(x) < s->depth2)
       continue;
     /* Compute x texture coordinate */
     uvx = (f32)((x - x_start) * tex_w) / uvw;
@@ -446,7 +446,7 @@ void render_scene(void) {
     /* Trace ray with DDA */
     cell_id = trace_ray(&g_camera.pos, &ray_dir, g_camera.dof, &hit);
     /* Store distance (squared) in z-buffer */
-    fb_set_depth(x, hit.dist * hit.dist);
+    zb_set_depth(x, hit.dist * hit.dist);
 
     draw_column(cell_id, x, &hit);
   }
