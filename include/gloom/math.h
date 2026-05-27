@@ -22,7 +22,7 @@ i32 isposf(f32 x) {
 
 static inline
 f32 signf(f32 x) {
-  return (isposf(x) << 1) - 1;
+  return (f32)((isposf(x) << 1) - 1);
 }
 
 static inline

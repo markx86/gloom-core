@@ -26,40 +26,14 @@ void on_tick(f32 delta) {
 }
 
 static
-void on_key(u32 code, char ch, b8 pressed) {
-  u32 prev_keys;
-
+void on_analog_change(f32 x, f32 y) {
   if (!client_pointer_is_locked())
     return;
 
-  prev_keys = g_keys.all_keys;
-  switch (code) {
-    case KEY_W:
-      g_keys.forward = pressed;
-      break;
-    case KEY_S:
-      g_keys.backward = pressed;
-      break;
-    case KEY_A:
-      g_keys.left = pressed;
-      break;
-    case KEY_D:
-      g_keys.right = pressed;
-      break;
-    case KEY_P:
-      client_switch_state(CLIENT_PAUSE);
-      return;
-    default:
-      printf("unhandled key %d (%c)\n", code, ch);
-      return;
-  }
+  game_analog_set(x, y);
 
-  if (g_keys.all_keys != prev_keys) {
-    multiplayer_queue_key_input();
-    g_do_send_update = true;
-  }
-
-  UNUSED(ch);
+  multiplayer_queue_input();
+  g_do_send_update = true;
 }
 
 static
@@ -93,7 +67,7 @@ void on_mouse_down(u32 x, u32 y, u32 button) {
 const struct state_handlers g_game_state = {
   .on_enter = on_enter,
   .on_tick = on_tick,
-  .on_key = on_key,
+  .on_analog_change = on_analog_change,
   .on_mouse_moved = on_mouse_moved,
   .on_mouse_down = on_mouse_down,
 };

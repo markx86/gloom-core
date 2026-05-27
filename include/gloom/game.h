@@ -79,16 +79,6 @@ struct map {
   u8 tiles[MAX_MAP_WIDTH * MAX_MAP_HEIGHT];
 };
 
-union keys {
-  struct {
-    b8 forward;
-    b8 backward;
-    b8 right;
-    b8 left;
-  };
-  u32 all_keys;
-};
-
 struct hit {
   f32 dist;
   b8 vertical;
@@ -99,6 +89,9 @@ extern const vec2i g_sprite_dims[SPRITE_MAX];
 
 #define PLAYER_MAX_HEALTH 100
 #define BULLET_DAMAGE     25
+
+void  game_analog_set(f32 x, f32 y);
+vec2f game_analog_get(void);
 
 void game_camera_set_fov(f32 new_fov);
 void game_player_set_rot(f32 new_rot);

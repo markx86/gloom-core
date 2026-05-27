@@ -35,13 +35,13 @@ void client_switch_state(enum client_state new_state) {
 void gloom_set_pointer_locked(b8 locked) {
   _g_pointer_locked = locked;
   if (!locked) {
-    g_keys.all_keys = 0;
+    game_analog_set(0.0f, 0.0f);
     /* Dirty hack to pause the game on lost focus, because I refuse to add
      * another handler just for pointer lock changes.
      */
     if (client_get_state() == CLIENT_GAME) {
       /* Notify the server the player has stopped */
-      multiplayer_queue_key_input();
+      multiplayer_queue_input();
       multiplayer_send_update();
       /* Switch to pause menu */
       client_switch_state(CLIENT_PAUSE);
@@ -55,8 +55,14 @@ void gloom_on_ws_close(void) {
     client_switch_state(CLIENT_ERROR);
 }
 
-void gloom_on_key_event(u32 code, char ch, b8 pressed) {
-  CALL_STATE_HANDLER(on_key, code, ch, pressed);
+void gloom_on_analog_change(f32 x, f32 y) {
+  if /**/ (x > +1.0f) x = 1.0f;
+  else if (x < -1.0f) x = -1.0f;
+
+  if /**/ (y > +1.0f) y = 1.0f;
+  else if (y < -1.0f) y = -1.0f;
+
+  CALL_STATE_HANDLER(on_analog_change, x, y);
 }
 
 void gloom_on_mouse_down(u32 x, u32 y, u32 button) {

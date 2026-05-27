@@ -3,13 +3,6 @@
 
 #include <gloom/types.h>
 
-/* These are the key codes that are sent by JavaScript */
-#define KEY_A 65
-#define KEY_D 68
-#define KEY_S 83
-#define KEY_W 87
-#define KEY_P 80
-
 enum client_state {
   CLIENT_ERROR,
   CLIENT_LOADING,
@@ -27,7 +20,7 @@ extern enum client_state _g_client_state;
 struct state_handlers {
   void (*on_tick)(f32);
   void (*on_enter)(void);
-  void (*on_key)(u32, char, b8);
+  void (*on_analog_change)(f32, f32);
   void (*on_mouse_moved)(u32, u32, i32, i32);
   void (*on_mouse_down)(u32, u32, u32);
   void (*on_mouse_up)(u32, u32, u32);

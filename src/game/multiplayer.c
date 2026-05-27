@@ -36,7 +36,7 @@ DEFINE_GPKT(ready, {
 DEFINE_GPKT(leave, {});
 
 DEFINE_GPKT(update, {
-  u32 keys;
+  vec2f input;
   f32 rot;
   f32 ts;
 });
@@ -213,7 +213,7 @@ void multiplayer_set_state(enum multiplayer_state state) {
   }
 }
 
-void multiplayer_queue_key_input(void) {
+void multiplayer_queue_input(void) {
   vec2f vel = game_get_player_dir();
   iring_push_elem(get_ts(), &VEC2SCALE(&vel, PLAYER_RUN_SPEED));
 }
@@ -235,7 +235,7 @@ void multiplayer_leave(void) {
 void multiplayer_send_update(void) {
   struct game_pkt_update pkt;
   init_game_pkt(&pkt, GPKT_UPDATE);
-  pkt.keys = g_keys.all_keys;
+  pkt.input = game_analog_get();
   pkt.rot = g_player.rot;
   pkt.ts = get_ts();
   send_packet_checked(&pkt, sizeof(pkt));

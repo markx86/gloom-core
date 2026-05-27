@@ -31,7 +31,7 @@ enum multiplayer_state multiplayer_get_state(void) {
 void multiplayer_set_state(enum multiplayer_state state);
 
 void multiplayer_draw_game_id(void);
-void multiplayer_queue_key_input(void);
+void multiplayer_queue_input(void);
 
 void multiplayer_init(u32 gid, u32 token);
 

@@ -10,7 +10,7 @@ void gloom_set_pointer_locked(b8 locked);
 
 void gloom_on_ws_close(void);
 void gloom_on_recv_packet(void* buf, u32 len);
-void gloom_on_key_event(u32 code, char ch, b8 pressed);
+void gloom_on_analog_change(f32 x, f32 y);
 void gloom_on_mouse_down(u32 x, u32 y, u32 button);
 void gloom_on_mouse_up(u32 x, u32 y, u32 button);
 void gloom_on_mouse_moved(u32 x, u32 y, i32 dx, i32 dy);

@@ -30,6 +30,7 @@
 #define CAMERA_POS_INTERP 0.66f
 
 static i32 g_display_health;
+static vec2f g_joystick;
 
 const vec2i g_sprite_dims[] = {
   [SPRITE_PLAYER] = { .x = PLAYER_SPRITE_W, .y = PLAYER_SPRITE_H },
@@ -40,6 +41,26 @@ const f32 g_sprite_radius[] = {
   [SPRITE_PLAYER] = 0.20f,
   [SPRITE_BULLET] = 0.01f
 };
+
+static inline
+f32 analog_input_strength() {
+  /* Since the components of g_joystick are between -1.0f and +1.0f,
+   * the length of g_joystick is always between 0 and sqrt(2).
+   * To get the strength of the input between 0.0f and 1.0f, we just calculate
+   * the length of g_joystick and divide it by its maximum length,
+   * which is sqrt(2).
+   */
+  return 1.0f / inv_sqrt(VEC2LENGTH2(&g_joystick)) * INV_SQRT2;
+}
+
+/* NOTE: @x and @y must be in the range of [-1.0f, +1.0f] */
+void game_analog_set(f32 x, f32 y) {
+  g_joystick = (vec2f) { x, y };
+}
+
+vec2f game_analog_get(void) {
+  return g_joystick;
+}
 
 /* NOTE: @new_fov must be in radians */
 void game_camera_set_fov(f32 new_fov) {
@@ -167,50 +188,37 @@ b8 game_move_and_collide(vec2f* pos, vec2f* diff, f32 radius) {
 }
 
 vec2f game_get_player_dir(void) {
-  i32 long_dir, side_dir;
-  vec2f dir = {
-    .x = 0.0f, .y = 0.0f
-  };
+  vec2f dir;
+  vec2f long_dir, side_dir;
+  vec2f v1, v2;
 
-  long_dir = g_keys.forward - g_keys.backward;
-  side_dir = g_keys.right - g_keys.left;
+  long_dir = g_player.dir;
+  side_dir = (vec2f) { -long_dir.y, +long_dir.x };
 
-  /* Forward movement */
-  if (long_dir) {
-    dir.x += g_player.dir.x * long_dir;
-    dir.y += g_player.dir.y * long_dir;
-  }
-  /* Sideways movement */
-  if (side_dir) {
-    dir.x += -g_player.dir.y * side_dir;
-    dir.y += +g_player.dir.x * side_dir;
+  v1 = VEC2SCALE(&long_dir, g_joystick.y);
+  v2 = VEC2SCALE(&side_dir, g_joystick.x);
 
-    /* If the user is trying to go both forwards and sideways,
-     * we normalize the vector by dividing by sqrt(2).
-     * We divide by sqrt(2) because both player.long_dir and player.side_dir
-     * have a length of 1, therefore ||vec_long_dir + vec_side_dir|| = sqrt(2).
-     */
-    if (long_dir) {
-      dir.x *= INV_SQRT2;
-      dir.y *= INV_SQRT2;
-    }
-  }
+  dir = VEC2ADD(&v1, &v2);
 
-  return dir;
+  /* Normalize the vector */
+  return vec2f_normalized(&dir);
 }
 
 static inline
 void update_player_position(f32 delta) {
   vec2f dir;
+  f32 speed;
 
   /* A dead man cannot move :^) */
   if (g_player.health <= 0)
     return;
 
   dir = game_get_player_dir();
+  /* Modulate input speed with analog input strength */
+  speed = PLAYER_RUN_SPEED * analog_input_strength();
 
   game_move_and_collide(&g_player.pos,
-                        &VEC2SCALE(&dir, delta * PLAYER_RUN_SPEED),
+                        &VEC2SCALE(&dir, delta * speed),
                         g_sprite_radius[SPRITE_PLAYER]);
 }
 
