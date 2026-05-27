@@ -164,15 +164,15 @@ b8 component_is_mouse_over(u32 x, u32 y, struct component* c) {
 }
 
 static
-void update_slider_value(struct component* c, u32 x, u32 y) {
-  i32 slider_start, slider_end;
+void update_slider_value(struct component* c, u32 x) {
+  u32 slider_start, slider_end;
 
   slider_end = c->br.x - PAD;
   slider_start = slider_end - SLIDER_WIDTH;
   if (x < slider_start || x > slider_end)
     return;
 
-  c->value = (f32)((i32)x - slider_start) / (f32)SLIDER_WIDTH;
+  c->value = (f32)(i32)(x - slider_start) / (f32)SLIDER_WIDTH;
   if (c->value < 0.0f)
     c->value = 0.0f;
   else if (c->value > 1.0f)
@@ -204,7 +204,7 @@ void ui_on_mouse_moved(u32 x, u32 y, i32 dx, i32 dy,
     if (c->state != UICOMP_PRESSED)
       c->state = !interacting && component_is_mouse_over(x, y, c) ? UICOMP_HOVER : UICOMP_IDLE;
     else if (c->type == UICOMP_SLIDER)
-      update_slider_value(c, x, y);
+      update_slider_value(c, x);
   }
 }
 
@@ -236,7 +236,7 @@ void ui_on_mouse_up(u32 x, u32 y, struct component* comps, u32 n) {
             c->ticked = !c->ticked;
             break;
           case UICOMP_SLIDER:
-            update_slider_value(c, x, y);
+            update_slider_value(c, x);
             break;
         }
         c->state = UICOMP_HOVER;
