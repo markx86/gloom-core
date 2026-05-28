@@ -13,6 +13,8 @@ void on_enter(void) {
     platform_pointer_lock();
 
   color_set_alpha(0xFF);
+  /* Re-center virtual controller */
+  game_analog_set(0.0f, 0.0f);
   g_do_send_update = false;
 }
 
@@ -30,10 +32,10 @@ void on_analog_change(f32 x, f32 y) {
   if (!client_pointer_is_locked())
     return;
 
-  game_analog_set(x, y);
-
-  multiplayer_queue_input();
-  g_do_send_update = true;
+  if (game_analog_set(x, y)) {
+    multiplayer_queue_input();
+    g_do_send_update = true;
+  }
 }
 
 static

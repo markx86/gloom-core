@@ -90,7 +90,7 @@ extern const vec2i g_sprite_dims[SPRITE_MAX];
 #define PLAYER_MAX_HEALTH 100
 #define BULLET_DAMAGE     25
 
-void  game_analog_set(f32 x, f32 y);
+b8    game_analog_set(f32 x, f32 y);
 vec2f game_analog_get(void);
 
 void game_camera_set_fov(f32 new_fov);

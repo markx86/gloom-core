@@ -54,8 +54,12 @@ f32 analog_input_strength() {
 }
 
 /* NOTE: @x and @y must be in the range of [-1.0f, +1.0f] */
-void game_analog_set(f32 x, f32 y) {
-  g_joystick = (vec2f) { x, y };
+b8 game_analog_set(f32 x, f32 y) {
+  if (x != g_joystick.x && y != g_joystick.y) {
+    g_joystick = (vec2f) {x, y};
+    return true;
+  } else
+    return false;
 }
 
 vec2f game_analog_get(void) {
