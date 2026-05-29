@@ -657,8 +657,7 @@ void gloom_on_recv_packet(void* buf, u32 len) {
     return; /* No data? */
   }
 
-  /* Ensure sequence number is within margin of error */
-  if (abs(hdr->seq - g_server_seq) < MAX_PACKET_DROP)
+  if (hdr->seq >= g_server_seq && hdr->seq - g_server_seq < MAX_PACKET_DROP)
     g_server_seq = hdr->seq + 1;
   else {
     eprintf("invalid sequence number (expected %u got %u)\n",
