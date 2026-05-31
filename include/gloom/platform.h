@@ -9,6 +9,9 @@ extern void platform_pointer_release(void);
 extern i32  platform_send_packet(void* pkt, u32 len);
 extern void platform_settings_store(f32 drawdist, f32 fov, f32 mousesens, b8 camsmooth);
 extern f32  platform_get_time(void);
+#ifdef USE_PLATFORM_COS
+extern f32  platform_cos(f32 angle);
+#endif
 extern f32  platform_acos(f32 value);
 
 #endif

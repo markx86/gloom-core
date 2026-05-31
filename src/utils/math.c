@@ -1,8 +1,8 @@
 #include <gloom/math.h>
 
-#define DECLARE_TABLE
-#include "cos_table.h"
-
+/* Fast inverse square root algorithm
+ * Source: https://en.wikipedia.org/wiki/Fast_inverse_square_root
+ */
 f32 inv_sqrt(f32 n) {
   i32 i;
   f32 x2, y;
@@ -15,6 +15,10 @@ f32 inv_sqrt(f32 n) {
   y = y * (three_halfs - ( x2 * y * y ) );
   return y;
 }
+
+#ifndef USE_PLATFORM_COS
+
+#include "cos_table.c"
 
 f32 cos(f32 angle) {
   f32 w;
@@ -29,3 +33,4 @@ f32 cos(f32 angle) {
   w -= (f32)i1;
   return lerp(w, g_cos_table[i1], g_cos_table[i2]);
 }
+#endif // USE_PLATFORM_COS

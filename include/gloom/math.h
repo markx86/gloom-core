@@ -81,7 +81,14 @@ vec2f vec2f_normalized(vec2f* vec) {
   return v;
 }
 
+#ifdef USE_PLATFORM_COS
+static inline
+f32 cos(f32 angle) {
+  return platform_cos(angle);
+}
+#else
 f32 cos(f32 angle);
+#endif // USE_PLATFORM_COS
 
 static inline
 f32 acos(f32 value) {
