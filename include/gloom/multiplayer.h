@@ -34,6 +34,7 @@ void multiplayer_draw_game_id(void);
 void multiplayer_queue_input(void);
 
 void multiplayer_init(u32 gid, u32 token);
+void multiplayer_tick(void);
 
 void multiplayer_signal_ready(b8 yes);
 void multiplayer_leave(void);

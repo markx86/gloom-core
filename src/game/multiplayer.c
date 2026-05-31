@@ -115,6 +115,7 @@ static u8 g_player_id;
 static u32 g_game_id;
 static u32 g_player_token;
 static u32 g_client_seq, g_server_seq;
+static f32 g_last_tick_ts;
 static f32 g_game_start;
 
 enum multiplayer_state _g_multiplayer_state;
@@ -199,10 +200,15 @@ void send_packet_checked(void* pkt, u32 size) {
 void multiplayer_init(u32 gid, u32 token) {
   g_game_id = gid;
   g_player_token = token;
+  g_last_tick_ts = get_ts();
   /* Reset game packet sequence */
   g_client_seq = g_server_seq = 0;
   iring_init();
   multiplayer_set_state(MULTIPLAYER_CONNECTED);
+}
+
+void multiplayer_tick(void) {
+  g_last_tick_ts = get_ts();
 }
 
 void multiplayer_set_state(enum multiplayer_state state) {
@@ -214,8 +220,8 @@ void multiplayer_set_state(enum multiplayer_state state) {
 }
 
 void multiplayer_queue_input(void) {
-  vec2f vel = game_get_player_dir();
-  iring_push_elem(get_ts(), &VEC2SCALE(&vel, PLAYER_RUN_SPEED));
+  vec2f vel = game_get_player_velocity();
+  iring_push_elem(get_ts(), &vel);
 }
 
 void multiplayer_signal_ready(b8 yes) {
@@ -458,7 +464,7 @@ void reconcile(f32 ts, vec2f* pos, vec2f* vel) {
     }
   }
 
-  delta = get_ts() - ts;
+  delta = g_last_tick_ts - ts;
   diff = VEC2SCALE(vel, delta);
   game_move_and_collide(pos, &diff, radius);
 

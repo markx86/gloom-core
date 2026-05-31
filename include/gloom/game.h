@@ -97,7 +97,7 @@ void game_camera_set_fov(f32 new_fov);
 void game_player_set_rot(f32 new_rot);
 void game_player_add_rot(f32 delta);
 
-vec2f game_get_player_dir(void);
+vec2f game_get_player_velocity(void);
 b8    game_move_and_collide(vec2f* pos, vec2f* diff, f32 radius);
 
 void game_init_player(vec2f pos, f32 rot);

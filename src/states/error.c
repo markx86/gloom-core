@@ -1,5 +1,6 @@
 #include <gloom/client.h>
 #include <gloom/gloom.h>
+#include <gloom/platform.h>
 #include <gloom/ui.h>
 
 #define BACKGROUND_COLOR SOLID_COLOR(RED)
@@ -13,6 +14,8 @@ static
 void on_enter(void) {
   ui_set_colors(FOREGROUND_COLOR, BACKGROUND_COLOR);
   ui_on_enter(&g_quit, 1);
+
+  platform_pointer_release();
 }
 
 static

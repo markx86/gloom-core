@@ -191,7 +191,8 @@ b8 game_move_and_collide(vec2f* pos, vec2f* diff, f32 radius) {
   return collided;
 }
 
-vec2f game_get_player_dir(void) {
+vec2f game_get_player_velocity(void) {
+  f32 speed;
   vec2f dir;
   vec2f long_dir, side_dir;
   vec2f v1, v2;
@@ -202,27 +203,27 @@ vec2f game_get_player_dir(void) {
   v1 = VEC2SCALE(&long_dir, g_joystick.y);
   v2 = VEC2SCALE(&side_dir, g_joystick.x);
 
-  dir = VEC2ADD(&v1, &v2);
+  /* Compute the direction vector */
+  dir = vec2f_normalized(&VEC2ADD(&v1, &v2));
 
-  /* Normalize the vector */
-  return vec2f_normalized(&dir);
+  /* Compute the current player speed */
+  speed = PLAYER_RUN_SPEED * analog_input_strength();
+
+  return VEC2SCALE(&dir, speed);
 }
 
 static inline
 void update_player_position(f32 delta) {
-  vec2f dir;
-  f32 speed;
+  vec2f vel;
 
   /* A dead man cannot move :^) */
   if (g_player.health <= 0)
     return;
 
-  dir = game_get_player_dir();
-  /* Modulate input speed with analog input strength */
-  speed = PLAYER_RUN_SPEED * analog_input_strength();
+  vel = game_get_player_velocity();
 
   game_move_and_collide(&g_player.pos,
-                        &VEC2SCALE(&dir, delta * speed),
+                        &VEC2SCALE(&vel, delta),
                         g_sprite_radius[SPRITE_PLAYER]);
 }
 
@@ -498,7 +499,7 @@ void render_sprites(void) {
     s->inv_depth = 1.0f / proj.y;
 
     /* Compute screen x */
-    s->screen_x = (FB_WIDTH >> 1) * (1.0f + proj.x / proj.y);
+    s->screen_x = (f32)(FB_WIDTH >> 1) * (1.0f + proj.x / proj.y);
     /* Compute screen width (we divide by two since
      * we always use the half screen width).
      */

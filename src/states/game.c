@@ -24,6 +24,7 @@ void on_tick(f32 delta) {
     multiplayer_send_update();
     g_do_send_update = false;
   }
+  multiplayer_tick();
   game_tick(delta);
 }
 
